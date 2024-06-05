@@ -35,25 +35,26 @@ csv_fieldnames = [
     "languages_raw",
     "reprint_from",
     "reprint_in",
+    "file",
 ]
 
 
-def source_to_json(source_path, result_filename):
+def source_to_json(data_repo: str, source: str, result_filename: str):
     with open(result_filename, "w") as material_f:
-        for doc in glob.glob(os.path.join(source_path, "**", "*.xml"), recursive=True):
+        for doc in glob.glob(os.path.join(data_repo, source, "**", "*.xml"), recursive=True):
             with open(doc) as f:
                 ed = epidoc.load(f)
-            material_f.write(json.dumps(convert_fields(ed)) + "\n")
+            material_f.write(json.dumps(convert_fields(ed, doc.replace(data_repo, ""))) + "\n")
 
 
-def source_to_csv(source_path, result_filename):
+def source_to_csv(data_repo: str, source: str, result_filename: str):
     with open(result_filename, "w") as material_f:
         writer = csv.DictWriter(material_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
         writer.writeheader()
-        for doc in glob.glob(os.path.join(source_path, "**", "*.xml"), recursive=True):
+        for doc in glob.glob(os.path.join(data_repo, source, "**", "*.xml"), recursive=True):
             with open(doc) as f:
                 ed = epidoc.load(f)
-            writer.writerow(convert_fields(ed))
+            writer.writerow(convert_fields(ed, doc.replace(data_repo, "")))
 
 
 def create_list(elements, field):
@@ -72,7 +73,7 @@ def create_list(elements, field):
     return result
 
 
-def convert_fields(doc):
+def convert_fields(doc, file):
     result = {}
     result["raw_title"] = doc.title
     result["title"] = None if doc.title and doc.title.lower() in ["keiner", "unknown"] else doc.title
@@ -103,4 +104,5 @@ def convert_fields(doc):
     result["edition_foreign_languages"] = doc.edition_foreign_languages if doc.edition_foreign_languages else None
     result["reprint_from"] = doc.reprint_from
     result["reprint_in"] = doc.reprint_in
+    result["file"] = file
     return result
