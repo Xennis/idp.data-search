@@ -9,6 +9,11 @@ python3 -m venv venv
 pip install --requirement requirements.txt
 ```
 
+First clone the repository [idp.data](https://github.com/papyri/idp.data). Next run the script
+```shell
+python main.py --path /path/to/idp.data
+```
+
 ## LICENSE
 
 ### Code
