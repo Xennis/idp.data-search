@@ -9,14 +9,14 @@ idp_data_repo = ""
 
 def run_csv(source: str):
     try:
-        source_to_csv(os.path.join(idp_data_repo, source), result_filename=f"source-{source.lower()}.csv")
+        source_to_csv(idp_data_repo, source=source, result_filename=f"source-{source.lower()}.csv")
     except Exception as e:
         return e
 
 
 def run_json(source: str):
     try:
-        source_to_json(os.path.join(idp_data_repo, source), result_filename=f"source-{source.lower()}.json")
+        source_to_json(idp_data_repo, source=source, result_filename=f"source-{source.lower()}.json")
     except Exception as e:
         return e
 
