@@ -33,6 +33,8 @@ csv_fieldnames = [
     "edition_foreign_languages",
     "languages",
     "languages_raw",
+    "reprint_from",
+    "reprint_in",
 ]
 
 
@@ -99,4 +101,6 @@ def convert_fields(doc):
     result["commentary"] = doc.commentary
     result["edition_language"] = doc.edition_language
     result["edition_foreign_languages"] = doc.edition_foreign_languages if doc.edition_foreign_languages else None
+    result["reprint_from"] = doc.reprint_from
+    result["reprint_in"] = doc.reprint_in
     return result
