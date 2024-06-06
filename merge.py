@@ -121,7 +121,7 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             #     lang_usage.remove('en')
             # result['langUsage'] = lang_usage
             merge_single(result, "mainLang", doc.edition_language)
-            merge_single(result, "foreignLang", doc.edition_foreign_languages if doc.edition_foreign_languages else None)
+            merge_single(result, "foreignLang", doc.edition_foreign_languages)
             # 'sources' field used instead of:
             # merge(result, "ddb_url", f"http://papyri.info/ddbdp/{ddb_hybrid}")
             merge_list(result, "sourceAuthority", doc.authority)
