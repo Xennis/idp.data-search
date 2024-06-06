@@ -81,31 +81,35 @@ def merge():
                     logging.warning(f"tm={tm}: {e}")
 
 
-def main(data_path: str, sources: list[str]):
+def main(data_path: str, sources: list[str], step: Optional[str]):
     # Due to the concurrent function below a global variable is used.
     global idp_data_repo
     idp_data_repo = data_path
 
     # Step 1: Convert sources to 1 JSON file per source with the required information.
-    with concurrent.futures.ProcessPoolExecutor(max_workers=8) as executor:
-        for result in executor.map(convert_source, sources):
-            if isinstance(result, Exception):
-                raise result
+    if step is None or step == "convert":
+        with concurrent.futures.ProcessPoolExecutor(max_workers=8) as executor:
+            for result in executor.map(convert_source, sources):
+                if isinstance(result, Exception):
+                    raise result
 
     # Step 2: Group by TM.
-    group_by_tm()
+    if step is None or step == "group":
+        group_by_tm()
 
     # Step 3: Create sheet
-    merge()
+    if step is None or step == "merge":
+        merge()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Convert IDP Date to CSV or JSON")
-    parser.add_argument("--path", help="Path to the cloned repository https://github.com/papyri/idp.data", type=str)
+    parser.add_argument("--path", help="Path to the cloned repository https://github.com/papyri/idp.data", required=True)
+    parser.add_argument("--step", help="Execute only a single step", choices=["convert", "group", "merge"])
     args = parser.parse_args()
 
     path: str = args.path
     if not os.path.isdir(path):
         raise TypeError(f"{path} is not a directory")
 
-    main(path, sources=["APD", "APIS", "DCLP", "DDB_EpiDoc_XML", "HGV_meta_EpiDoc", "HGV_trans_EpiDoc"])
+    main(path, sources=["APD", "APIS", "DCLP", "DDB_EpiDoc_XML", "HGV_meta_EpiDoc", "HGV_trans_EpiDoc"], step=args.step)
