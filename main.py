@@ -25,8 +25,8 @@ def convert_source(source: str):
                 result_file.write(
                     json.dumps(
                         {
-                            "tm": ed.idno.get("tm"),
-                            "file": doc.replace(idp_data_repo, ""),
+                            "tms": ed.idno.get("tm"),
+                            "file": doc.replace(f"{idp_data_repo}{os.sep}", ""),
                         }
                     )
                     + "\n"
@@ -47,7 +47,7 @@ def group_by_tm():
 
                 ed: dict[str, str] = json.loads(line)
                 file: str = ed["file"]
-                tms: Optional[str] = ed.get("tm")
+                tms: Optional[str] = ed.get("tms")
 
                 if tms is None:
                     count_missing += 1
