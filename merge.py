@@ -41,7 +41,7 @@ def create_list(elements, field: str) -> Optional[list[Any]]:
 
 
 def merge_single(result: dict[str, Any], field: str, value: Optional[Any]) -> None:
-    if value is None:
+    if value is None or (isinstance(value, dict) and not value):
         return
 
     current = result.get(field)
@@ -63,7 +63,7 @@ def merge_single(result: dict[str, Any], field: str, value: Optional[Any]) -> No
 
 
 def merge_list(result: dict[str, Any], field: str, value: Optional[list[Any]]) -> None:
-    if value is None:
+    if value is None or not value:
         return
 
     current = result.get(field)
