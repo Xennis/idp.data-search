@@ -66,9 +66,9 @@ def group_by_tm():
     logging.warning(f"{count_missing:,} of {count_total:,} files had no TM number.")
 
 
-def merge(idp_data_repo):
+def merge():
     with open(os.path.join(output_dir, "tms.json")) as tms_file:
-        with open(os.path.join("ipd-data-sheet.csv"), "w") as res_f:
+        with open(os.path.join(output_dir, "ipd-data-sheet.csv"), "w") as res_f:
             writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
             writer.writeheader()
             for line in tms_file.readlines():
@@ -96,7 +96,7 @@ def main(data_path: str, sources: list[str]):
     group_by_tm()
 
     # Step 3: Create sheet
-    merge(idp_data_repo=data_path)
+    merge()
 
 
 if __name__ == "__main__":
