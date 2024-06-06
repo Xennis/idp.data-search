@@ -1,2 +1,2 @@
-git+https://github.com/Xennis/epidoc-parser@a3683d40cec097ba3cd8106996380a83652f55b4#egg=epidoc
+git+https://github.com/Xennis/epidoc-parser@0872ea78756931f245d24c643d9bca624ce8f946#egg=epidoc
 black==24.4.0  # Code formatter

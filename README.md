@@ -2,6 +2,8 @@
 
 Script for generating a CSV sheet of the [Integrating Digital Papyrology (IDP) data](https://github.com/papyri/idp.data).
 
+It uses the [epidoc](https://github.com/Xennis/epidoc-parser) library.
+
 ## Development
 
 Create a virtual environment, enable it and install the dependencies

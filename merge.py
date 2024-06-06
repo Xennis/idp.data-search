@@ -1,5 +1,4 @@
-import os.path
-from typing import Any
+from typing import Any, Optional
 import epidoc
 
 
@@ -17,11 +16,14 @@ csv_fieldnames = [
     "origin_places",
     "provenances_located",
     "provenances_found",
-    "sources",
+    # Information about the source of this entry
+    "source_files",
+    "source_authority",
+    "source_availability",
 ]
 
 
-def create_list(elements, field):
+def create_list(elements, field: str) -> Optional[list[Any]]:
     if not elements:
         return None
     result = []
@@ -37,7 +39,7 @@ def create_list(elements, field):
     return result
 
 
-def merge(result: dict[str, Any], field: str, value: Any):
+def merge(result: dict[str, Any], field: str, value: Any) -> None:
     current = result.get(field)
     if current is None:
         result[field] = value
@@ -47,14 +49,13 @@ def merge(result: dict[str, Any], field: str, value: Any):
         return
 
     result[field] = [current, value]
-    # raise Exception(f"field {field} current={current} new={value}")
 
 
-def convert(tm: str, files: list[str], idp_data_repo: str):
+def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
     result = {
         "tm": tm,
         # "trismegistos_url": f"https://www.trismegistos.org/text/{tm}",
-        "sources": files,
+        "source_files": files,
     }
     for file in files:
 
@@ -82,6 +83,8 @@ def convert(tm: str, files: list[str], idp_data_repo: str):
             merge(result, "origin_places", doc.origin_place.get("text"))
             merge(result, "provenances_located", create_list(doc.provenances.get("located"), "text"))
             merge(result, "provenances_found", create_list(doc.provenances.get("found"), "text"))
+            merge(result, "source_authority", doc.authority)
+            merge(result, "source_availability", doc.availability)
         elif file.startswith("DDB_EpiDoc_XML"):
             # url: f"http://papyri.info/ddbdp/{ddb_hybrid}" with `ddb_hybrid = doc.idno.get("ddb-hybrid")`
 
@@ -93,6 +96,8 @@ def convert(tm: str, files: list[str], idp_data_repo: str):
             merge(result, "foreignLang", doc.edition_foreign_languages if doc.edition_foreign_languages else None)
             # 'sources' field used instead of:
             # merge(result, "ddb_url", f"http://papyri.info/ddbdp/{ddb_hybrid}")
+            merge(result, "source_authority", doc.authority)
+            merge(result, "source_availability", doc.availability)
         elif file.startswith("HGV_meta_EpiDoc"):
             # url: f"http://papyri.info/hgv/{tm}"
             merge(result, "terms", [term.get("text") for term in doc.terms])
@@ -105,6 +110,8 @@ def convert(tm: str, files: list[str], idp_data_repo: str):
             merge(result, "origin_places", doc.origin_place.get("text"))
             merge(result, "provenances_located", create_list(doc.provenances.get("located"), "text"))
             merge(result, "provenances_found", create_list(doc.provenances.get("found"), "text"))
+            merge(result, "source_authority", doc.authority)
+            merge(result, "source_availability", doc.availability)
         elif file.startswith("HGV_trans_EpiDoc"):
             pass
 
