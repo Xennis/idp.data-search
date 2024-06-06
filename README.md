@@ -1,4 +1,6 @@
-# idp-data-to-json-or-csv
+# IDP (Integrating Digital Papyrology) Data Sheet
+
+Script for generating a CSV sheet of the [Integrating Digital Papyrology (IDP) data](https://github.com/papyri/idp.data).
 
 ## Development
 
@@ -13,9 +15,3 @@ First clone the repository [idp.data](https://github.com/papyri/idp.data). Next 
 ```shell
 python main.py --path /path/to/idp.data
 ```
-
-## LICENSE
-
-### Code
-
-see [LICENSE](LICENSE)
