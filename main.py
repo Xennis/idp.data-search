@@ -66,19 +66,55 @@ def group_by_tm():
     logging.warning(f"{count_missing:,} of {count_total:,} files had no TM number.")
 
 
+def merge_process_fn(args: list[str, int, int]):
+    filename, start, stop = args
+    entries = []
+    with open(filename) as fh:
+        fh.seek(start)
+        for line in fh.readlines(stop - start):
+            doc = json.loads(line)
+            tm = doc.get("tm")
+            files = doc.get("files")
+            entries.append(convert(tm, files, idp_data_repo=idp_data_repo))
+
+    return entries
+
+
 def merge():
-    with open(os.path.join(output_dir, "tms.json")) as tms_file:
-        with open(os.path.join(output_dir, "ipd-data-sheet.csv"), "w") as res_f:
-            writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
-            writer.writeheader()
-            for line in tms_file.readlines():
-                doc = json.loads(line)
-                tm = doc.get("tm")
-                files = doc.get("files")
-                try:
-                    writer.writerow(convert(tm, files, idp_data_repo=idp_data_repo))
-                except Exception as e:
-                    logging.warning(f"tm={tm}: {e}")
+    grouped_result_file = os.path.join(output_dir, "tms.json")
+    file_size = os.path.getsize(grouped_result_file)
+    split_size = 1024 * 1024
+
+    fn_args = []
+    with open(grouped_result_file) as tms_file:
+        cursor = 0
+        for chunk in range(file_size // split_size):
+            # determine the end of the chunk
+            if cursor + split_size > file_size:
+                end = file_size
+            else:
+                end = cursor + split_size
+
+            # seek the end of the chunk and ensure it is an entire line
+            tms_file.seek(end)
+            tms_file.readline()
+            end = tms_file.tell()  # current location
+
+            fn_args.append([grouped_result_file, cursor, end])
+            cursor = end  # setup next chunk
+
+    entries = []
+    with concurrent.futures.ProcessPoolExecutor(max_workers=8) as executor:
+        for fn_result in executor.map(merge_process_fn, fn_args):
+            if isinstance(fn_result, Exception):
+                raise fn_result
+            entries.extend(fn_result)
+
+    with open(os.path.join(output_dir, "ipd-data-sheet.csv"), "w") as res_f:
+        writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
+        writer.writeheader()
+        for line in entries:
+            writer.writerow(line)
 
 
 def main(data_path: str, sources: list[str], step: Optional[str]):
