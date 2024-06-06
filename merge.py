@@ -1,3 +1,4 @@
+import os.path
 from typing import Any, Optional
 import epidoc
 
@@ -88,9 +89,7 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
     }
     for file in files:
 
-        # FIXME: Using `join` is somehow not working. Maybe because the path ends with "ipd.data"?
-        # filepath = os.path.join(idp_data_repo, file)
-        filepath = f"{idp_data_repo}{file}"
+        filepath = os.path.join(idp_data_repo, file)
         with open(filepath) as f:
             doc = epidoc.load(f)
 
