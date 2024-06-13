@@ -32,7 +32,7 @@ def convert_source(source: str):
                     + "\n"
                 )
     except Exception as e:
-        return e
+        return e  # returned and not raised due to concurrent execution
 
 
 def group_by_tm():
@@ -139,7 +139,7 @@ def main(data_path: str, sources: list[str], step: Optional[str]):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Convert IDP Date to CSV or JSON")
+    parser = argparse.ArgumentParser("Convert IDP data to a single CSV file")
     parser.add_argument("--path", help="Path to the cloned repository https://github.com/papyri/idp.data", required=True)
     parser.add_argument("--step", help="Execute only a single step", choices=["convert", "group", "merge"])
     args = parser.parse_args()

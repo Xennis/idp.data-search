@@ -109,6 +109,7 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             merge_list(result, "originDatesNotbefore", create_list(doc.origin_dates, "notbefore"))
             merge_list(result, "originDatesNotafter", create_list(doc.origin_dates, "notafter"))
             merge_single(result, "originPlaces", doc.origin_place.get("text"))
+            merge_list(result, "provenancesComposed", create_list(doc.provenances.get("composed"), "text"))
             merge_list(result, "provenancesLocated", create_list(doc.provenances.get("located"), "text"))
             merge_list(result, "provenancesFound", create_list(doc.provenances.get("found"), "text"))
             merge_single(result, "sourceAuthority", doc.authority)
@@ -122,8 +123,6 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             # result['langUsage'] = lang_usage
             merge_single(result, "mainLang", doc.edition_language)
             merge_single(result, "foreignLang", doc.edition_foreign_languages)
-            # 'sources' field used instead of:
-            # merge(result, "ddb_url", f"http://papyri.info/ddbdp/{ddb_hybrid}")
             merge_list(result, "sourceAuthority", doc.authority)
             merge_list(result, "sourceAvailability", doc.availability)
         elif file.startswith("HGV_meta_EpiDoc"):
@@ -136,6 +135,7 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             merge_list(result, "originDatesNotbefore", create_list(doc.origin_dates, "notbefore"))
             merge_list(result, "originDatesNotafter", create_list(doc.origin_dates, "notafter"))
             merge_single(result, "originPlaces", doc.origin_place.get("text"))
+            merge_list(result, "provenancesComposed", create_list(doc.provenances.get("composed"), "text"))
             merge_list(result, "provenancesLocated", create_list(doc.provenances.get("located"), "text"))
             merge_list(result, "provenancesFound", create_list(doc.provenances.get("found"), "text"))
             merge_single(result, "sourceAuthority", doc.authority)
