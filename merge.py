@@ -15,6 +15,7 @@ csv_fieldnames = [
     "originDatesNotbefore",
     "originDatesNotafter",
     "originPlaces",
+    "provenancesComposed",
     "provenancesLocated",
     "provenancesFound",
     # Information about the source of this entry
