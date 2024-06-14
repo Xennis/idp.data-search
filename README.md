@@ -1,8 +1,8 @@
 # IDP (Integrating Digital Papyrology) Data Sheet
 
-**Script for generating a CSV sheet of the [Integrating Digital Papyrology (IDP) data](https://github.com/papyri/idp.data).**
+**Script for generating a *single* CSV sheet of the [Integrating Digital Papyrology (IDP) data](https://github.com/papyri/idp.data).**
 
-Example: [CSV imported into Google Sheets](https://docs.google.com/spreadsheets/d/19b-uGsyhmQ7lpqvoEPA7eFzCNz8HowDbdq1PzqDaxuM/)
+The generated sheet: [CSV imported into Google Sheets](https://docs.google.com/spreadsheets/d/19b-uGsyhmQ7lpqvoEPA7eFzCNz8HowDbdq1PzqDaxuM/)
 
 ![Screenshot of the Google Sheets](screenshot.png)
 
