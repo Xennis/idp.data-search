@@ -19,18 +19,21 @@ def convert_source(source: str):
     try:
         with open(os.path.join(output_dir, f"source-{source.lower()}.json"), "w") as result_file:
             for doc in glob.glob(os.path.join(idp_data_repo, source, "**", "*.xml"), recursive=True):
-                with open(doc) as f:
-                    ed = epidoc.load(f)
+                try:
+                    with open(doc) as f:
+                        ed = epidoc.load(f)
 
-                result_file.write(
-                    json.dumps(
-                        {
-                            "tms": ed.idno.get("tm"),
-                            "file": doc.replace(f"{idp_data_repo}{os.sep}", ""),
-                        }
+                    result_file.write(
+                        json.dumps(
+                            {
+                                "tms": ed.idno.get("tm"),
+                                "file": doc.replace(f"{idp_data_repo}{os.sep}", ""),
+                            }
+                        )
+                        + "\n"
                     )
-                    + "\n"
-                )
+                except Exception as e:
+                    raise RuntimeError(f"Failed to process doc '${doc}'") from e
     except Exception as e:
         return e  # returned and not raised due to concurrent execution
 
