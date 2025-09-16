@@ -1,6 +1,6 @@
 # IDP (Integrating Digital Papyrology) Data Sheet
 
-**Script for generating a *single* CSV sheet of the [Papyri.info Integrating Digital Papyrology (IDP) data](https://github.com/papyri/idp.data).**
+**Script for generating a *single* CSV sheet (or JSON file) of the [Papyri.info Integrating Digital Papyrology (IDP) data](https://github.com/papyri/idp.data).**
 
 The generated sheet: [CSV imported into Google Sheets](https://docs.google.com/spreadsheets/d/19b-uGsyhmQ7lpqvoEPA7eFzCNz8HowDbdq1PzqDaxuM/)
 
@@ -20,4 +20,9 @@ pip install --requirement requirements.txt
 First clone the repository [idp.data](https://github.com/papyri/idp.data). Next run the script
 ```shell
 python main.py --path /path/to/idp.data
+```
+
+Checkout the help documentation:
+```shell
+python main.py --help
 ```

@@ -5,7 +5,7 @@ import logging
 import os.path
 import json
 import glob
-from typing import Optional
+from typing import Optional, Any
 
 import epidoc
 
@@ -69,7 +69,7 @@ def group_by_tm():
     logging.warning(f"{count_missing:,} of {count_total:,} files had no TM number.")
 
 
-def merge_process_fn(args: list[str, int, int]):
+def merge_process_fn(args: list[str, int, int]) -> list[dict[str, Any]]:
     filename, start, stop = args
     entries = []
     with open(filename) as fh:
@@ -83,7 +83,7 @@ def merge_process_fn(args: list[str, int, int]):
     return entries
 
 
-def merge():
+def merge(format: str):
     grouped_result_file = os.path.join(output_dir, "tms.json")
     file_size = os.path.getsize(grouped_result_file)
     split_size = 1024 * 1024
@@ -113,14 +113,20 @@ def merge():
                 raise fn_result
             entries.extend(fn_result)
 
-    with open(os.path.join(output_dir, "ipd-data-sheet.csv"), "w") as res_f:
-        writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
-        writer.writeheader()
-        for line in entries:
-            writer.writerow(line)
+    with open(os.path.join(output_dir, f"ipd-data-sheet.{format}"), "w") as res_f:
+        if format == "csv":
+            writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
+            writer.writeheader()
+            for line in entries:
+                writer.writerow(line)
+        elif format == "json":
+            for line in entries:
+                res_f.write(f"{json.dumps(line, separators=(",", ":"))}\n")
+        else:
+            raise Exception(f"Unsupported format '{format}'")
 
 
-def main(data_path: str, sources: list[str], step: Optional[str]):
+def main(data_path: str, sources: list[str], step: Optional[str], format: str):
     # Due to the concurrent function below a global variable is used.
     global idp_data_repo
     idp_data_repo = data_path
@@ -138,17 +144,18 @@ def main(data_path: str, sources: list[str], step: Optional[str]):
 
     # Step 3: Create sheet
     if step is None or step == "merge":
-        merge()
+        merge(format=format)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Convert IDP data to a single CSV file")
     parser.add_argument("--path", help="Path to the cloned repository https://github.com/papyri/idp.data", required=True)
     parser.add_argument("--step", help="Execute only a single step", choices=["convert", "group", "merge"])
+    parser.add_argument("--format", help="Output file format", choices=["csv", "json"], default="csv")
     args = parser.parse_args()
 
     path: str = args.path
     if not os.path.isdir(path):
         raise TypeError(f"{path} is not a directory")
 
-    main(path, sources=["APD", "APIS", "DCLP", "DDB_EpiDoc_XML", "HGV_meta_EpiDoc", "HGV_trans_EpiDoc"], step=args.step)
+    main(path, sources=["APD", "APIS", "DCLP", "DDB_EpiDoc_XML", "HGV_meta_EpiDoc", "HGV_trans_EpiDoc"], step=args.step, format=args.format)
