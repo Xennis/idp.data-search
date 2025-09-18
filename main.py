@@ -83,6 +83,16 @@ def merge_process_fn(args: list[str, int, int]) -> list[dict[str, Any]]:
     return entries
 
 
+def flatten_single_value_lists(line: dict[str, Any]) -> dict[str, Any]:
+    """
+    Replace all values that are lists of size 1 with their single element.
+    """
+    for key, value in line.items():
+        if isinstance(value, list) and len(value) == 1:
+            line[key] = value[0]
+    return line
+
+
 def merge(format: str):
     grouped_result_file = os.path.join(output_dir, "tms.json")
     file_size = os.path.getsize(grouped_result_file)
@@ -113,12 +123,13 @@ def merge(format: str):
                 raise fn_result
             entries.extend(fn_result)
 
-    with open(os.path.join(output_dir, f"ipd-data-sheet.{format}"), "w") as res_f:
+    file_extension = "jsonl" if format == "json" else "csv"
+    with open(os.path.join(output_dir, f"ipd-data-sheet.{file_extension}"), "w") as res_f:
         if format == "csv":
             writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
             writer.writeheader()
             for line in entries:
-                writer.writerow(line)
+                writer.writerow(flatten_single_value_lists(line))
         elif format == "json":
             for line in entries:
                 res_f.write(f"{json.dumps(line, separators=(",", ":"))}\n")
@@ -158,4 +169,9 @@ if __name__ == "__main__":
     if not os.path.isdir(path):
         raise TypeError(f"{path} is not a directory")
 
-    main(path, sources=["APD", "APIS", "DCLP", "DDB_EpiDoc_XML", "HGV_meta_EpiDoc", "HGV_trans_EpiDoc"], step=args.step, format=args.format)
+    main(
+        path,
+        sources=["APD", "APIS", "DCLP", "DDB_EpiDoc_XML", "HGV_meta_EpiDoc", "HGV_trans_EpiDoc"],
+        step=args.step,
+        format=args.format,
+    )

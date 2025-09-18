@@ -42,45 +42,37 @@ def create_list(elements, field: str) -> Optional[list[Any]]:
 
 
 def merge_single(result: dict[str, Any], field: str, value: Optional[Any]) -> None:
-    if value is None or (isinstance(value, dict) and not value):
+    if value is None or (isinstance(value, dict) and not value):  # None or empty dict
         return
 
-    current = result.get(field)
+    current: Optional[list[Any]] = result.get(field)
     if current is None:
-        result[field] = value
+        result[field] = [value]
         return
 
-    merged_before = isinstance(current, list)
-    if not merged_before:
-        if current == value:
-            return  # Same value
+    if value in current:
+        return  # duplicate
 
-        result[field] = [current, value]
-    else:
-        if any(value == c for c in current):
-            return  # Same value
-
-        result[field] = current.append(value)
+    current.append(value)
 
 
-def merge_list(result: dict[str, Any], field: str, value: Optional[list[Any]]) -> None:
-    if value is None or not value:
+def merge_list(result: dict[str, Any], field: str, values: Optional[list[Any]]) -> None:
+    if values is None or not values:  # Nore or empty list
         return
 
-    current = result.get(field)
+    assert isinstance(values, list), "values is not a list"  # Avoid function is called with a string as `values`
+
+    current: Optional[list[Any]] = result.get(field)
     if current is None:
-        result[field] = value
+        # Currently we do not check if `values` has duplicates
+        result[field] = values
         return
 
-    merged_before = len(current) > 0 and isinstance(current[0], list)
-    if not merged_before:
-        if current == value:
-            return
+    for value in values:
+        if value in current:
+            continue  # duplicate
 
-        result[field] = [current, value]
-    else:
-        # FIXME: Here is no check if the list already exists
-        result[field] = current.extend(value)
+        current.append(value)
 
 
 def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
@@ -124,8 +116,8 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             # result['langUsage'] = lang_usage
             merge_single(result, "mainLang", doc.edition_language)
             merge_single(result, "foreignLang", doc.edition_foreign_languages)
-            merge_list(result, "sourceAuthority", doc.authority)
-            merge_list(result, "sourceAvailability", doc.availability)
+            merge_single(result, "sourceAuthority", doc.authority)
+            merge_single(result, "sourceAvailability", doc.availability)
         elif file.startswith("HGV_meta_EpiDoc"):
             # url: f"http://papyri.info/hgv/{tm}"
             merge_list(result, "terms", [term.get("text") for term in doc.terms])
