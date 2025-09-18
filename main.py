@@ -10,6 +10,7 @@ from typing import Optional, Any
 import epidoc
 
 from merge import csv_fieldnames, convert
+from relations import relations
 
 idp_data_repo = ""
 output_dir = "out"
@@ -69,7 +70,7 @@ def group_by_tm():
     logging.warning(f"{count_missing:,} of {count_total:,} files had no TM number.")
 
 
-def merge_process_fn(args: list[str, int, int]) -> list[dict[str, Any]]:
+def merge_process_fn(args: tuple[str, int, int]) -> list[dict[str, Any]]:
     filename, start, stop = args
     entries = []
     with open(filename) as fh:
@@ -157,11 +158,15 @@ def main(data_path: str, sources: list[str], step: Optional[str], format: str):
     if step is None or step == "merge":
         merge(format=format)
 
+    # Step 4: Create relations
+    if (step is None and format == "json") or step == "relations":
+        relations(output_dir=output_dir)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Convert IDP data to a single CSV file")
     parser.add_argument("--path", help="Path to the cloned repository https://github.com/papyri/idp.data", required=True)
-    parser.add_argument("--step", help="Execute only a single step", choices=["convert", "group", "merge"])
+    parser.add_argument("--step", help="Execute only a single step", choices=["convert", "group", "merge", "relations"])
     parser.add_argument("--format", help="Output file format", choices=["csv", "json"], default="csv")
     args = parser.parse_args()
 

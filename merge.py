@@ -60,15 +60,19 @@ def merge_list(result: dict[str, Any], field: str, values: Optional[list[Any]]) 
     if values is None or not values:  # Nore or empty list
         return
 
-    assert isinstance(values, list), "values is not a list"  # Avoid function is called with a string as `values`
+    assert isinstance(values, list), "values should be a list"  # Avoid function is called with a (iterable) string
+    values_without_none = [x for x in values if x is not None]  # Remove `None`s
 
     current: Optional[list[Any]] = result.get(field)
     if current is None:
         # Currently we do not check if `values` has duplicates
-        result[field] = values
+        result[field] = values_without_none
         return
 
-    for value in values:
+    assert isinstance(current, list), "current should be a list"
+
+    for value in values_without_none:
+        assert value is not None, "value should not be none"
         if value in current:
             continue  # duplicate
 

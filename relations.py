@@ -1,0 +1,60 @@
+import json
+import os.path
+from typing import Any, Optional, TypeVar
+
+V = TypeVar("V")
+
+terms_cache: dict[str, list[Any]] = {}
+materials_cache: dict[str, list[Any]] = {}
+main_langs_cache: dict[str, list[Any]] = {}
+
+
+def sort_dict_by_keys(value: dict[str, V]) -> dict[str, V]:
+    return {k: value[k] for k in sorted(value)}
+
+
+def append_cache(cache: dict[str, list[V]], tm: V, values: Optional[list[str]]) -> None:
+    if not values:
+        return
+
+    assert isinstance(values, list), "values should be a list"
+
+    for value in values:
+        assert value is not None, "value should not be None"  # Merge step should ensure this. Avoid trouble when sorting dict.
+
+        if value not in cache:
+            cache[value] = [tm]
+            continue
+
+        cache[value].append(tm)
+
+
+def write_relation_file(filename: str, entries: dict[str, list[V]], key) -> None:
+    with open(filename, "w") as terms_f:
+        for term, tms in sort_dict_by_keys(entries).items():
+            terms_f.write(
+                json.dumps(
+                    {
+                        key: term,
+                        "tms": tms,
+                    }
+                )
+                + "\n"
+            )
+
+
+def relations(output_dir: str) -> None:
+    with open(os.path.join(output_dir, "ipd-data-sheet.jsonl")) as data_r:
+        for line in data_r.readlines():
+            entry = json.loads(line)
+
+            tm: str = entry["tm"]
+            assert isinstance(tm, str), "tm should be a string"
+
+            append_cache(terms_cache, tm=tm, values=entry.get("terms"))
+            append_cache(materials_cache, tm=tm, values=entry.get("material"))
+            append_cache(main_langs_cache, tm=tm, values=entry.get("mainLang"))
+
+    write_relation_file(os.path.join(output_dir, "terms.jsonl"), terms_cache, key="term")
+    write_relation_file(os.path.join(output_dir, "materials.jsonl"), materials_cache, key="material")
+    write_relation_file(os.path.join(output_dir, "mainLangs.jsonl"), main_langs_cache, key="mainLang")
