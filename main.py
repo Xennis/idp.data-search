@@ -9,6 +9,7 @@ from typing import Optional, Any
 
 import epidoc
 
+from config import formatCsv, formatJson, formatJsonl
 from merge import csv_fieldnames, convert
 from relations import relations
 
@@ -124,16 +125,17 @@ def merge(format: str):
                 raise fn_result
             entries.extend(fn_result)
 
-    file_extension = "jsonl" if format == "json" else "csv"
-    with open(os.path.join(output_dir, f"ipd-data-sheet.{file_extension}"), "w") as res_f:
-        if format == "csv":
+    with open(os.path.join(output_dir, f"ipd-data-sheet.{format}"), "w") as res_f:
+        if format == formatCsv:
             writer = csv.DictWriter(res_f, fieldnames=csv_fieldnames, quoting=csv.QUOTE_ALL)
             writer.writeheader()
             for line in entries:
                 writer.writerow(flatten_single_value_lists(line))
-        elif format == "json":
+        elif format == formatJson:
+            res_f.write(json.dumps(entries, separators=(",", ":")))
+        elif format == formatJsonl:
             for line in entries:
-                res_f.write(f"{json.dumps(line, separators=(",", ":"))}\n")
+                res_f.write(json.dumps(line, separators=(",", ":")) + "\n")
         else:
             raise Exception(f"Unsupported format '{format}'")
 
@@ -159,7 +161,7 @@ def main(data_path: str, sources: list[str], step: Optional[str], format: str):
         merge(format=format)
 
     # Step 4: Create relations
-    if (step is None and format == "json") or step == "relations":
+    if (step is None and format == formatJsonl) or step == "relations":
         relations(output_dir=output_dir)
 
 
@@ -167,7 +169,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Convert IDP data to a single CSV file")
     parser.add_argument("--path", help="Path to the cloned repository https://github.com/papyri/idp.data", required=True)
     parser.add_argument("--step", help="Execute only a single step", choices=["convert", "group", "merge", "relations"])
-    parser.add_argument("--format", help="Output file format", choices=["csv", "json"], default="csv")
+    parser.add_argument("--format", help="Output file format", choices=[formatCsv, formatJson, formatJsonl], default=formatCsv)
     args = parser.parse_args()
 
     path: str = args.path
