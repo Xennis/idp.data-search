@@ -4,10 +4,6 @@ from typing import Any, Optional, TypeVar
 
 V = TypeVar("V")
 
-terms_cache: dict[str, list[Any]] = {}
-materials_cache: dict[str, list[Any]] = {}
-main_langs_cache: dict[str, list[Any]] = {}
-
 
 def sort_dict_by_keys(value: dict[str, V]) -> dict[str, V]:
     return {k: value[k] for k in sorted(value)}
@@ -44,6 +40,10 @@ def write_relation_file(filename: str, entries: dict[str, list[V]], key) -> None
 
 
 def relations(output_dir: str) -> None:
+    terms_cache: dict[str, list[Any]] = {}
+    materials_cache: dict[str, list[Any]] = {}
+    main_langs_cache: dict[str, list[Any]] = {}
+
     with open(os.path.join(output_dir, "ipd-data-sheet.jsonl")) as data_r:
         for line in data_r.readlines():
             entry = json.loads(line)
