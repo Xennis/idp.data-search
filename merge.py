@@ -1,6 +1,6 @@
 import os.path
 from typing import Any, Optional
-import epidoc
+import epidoc_parser
 
 
 csv_fieldnames = [
@@ -88,7 +88,7 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
 
         filepath = os.path.join(idp_data_repo, file)
         with open(filepath) as f:
-            doc = epidoc.load(f)
+            doc = epidoc_parser.load(f)
 
         if len(doc.reprint_in) > 0:
             continue

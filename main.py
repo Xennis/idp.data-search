@@ -7,7 +7,7 @@ import json
 import glob
 from typing import Optional, Any
 
-import epidoc
+import epidoc_parser
 
 from config import formatCsv, formatJson, formatJsonl
 from merge import csv_fieldnames, convert
@@ -23,7 +23,7 @@ def convert_source(source: str):
             for doc in glob.glob(os.path.join(idp_data_repo, source, "**", "*.xml"), recursive=True):
                 try:
                     with open(doc) as f:
-                        ed = epidoc.load(f)
+                        ed = epidoc_parser.load(f)
 
                     result_file.write(
                         json.dumps(

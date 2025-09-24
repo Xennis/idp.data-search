@@ -1,4 +1,4 @@
 # Note: Run `pip uninstall epidoc` to enforce new version is installed
-git+https://github.com/Xennis/epidoc-parser@dacc956be98eeebe263b9b6b5520e62bde3a179e#egg=epidoc
+git+https://github.com/Xennis/epidoc-parser@2f62d03f93937dd8cc1bf1ebe7900987dbb592b6#egg=epidoc_parser
 black==25.1.0  # Code formatter
 mypy==1.18.1  # Type checking
