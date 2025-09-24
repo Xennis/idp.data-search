@@ -1,0 +1,16 @@
+name: Python
+on: push
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+    - name: Install dependencies
+      run: pip install --requirement requirements.txt
+    - name: Check lint and test
+      run: make check
