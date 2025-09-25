@@ -8,10 +8,13 @@ The generated sheet: [CSV imported into Google Sheets](https://docs.google.com/s
 
 The Python script uses the [epidoc](https://github.com/Xennis/epidoc-parser) library for parsing the data.
 
-## Development
+## Pipeline
+
+### Development
 
 Create a virtual environment, enable it and install the dependencies
 ```shell
+cd pipeline/
 python3 -m venv venv
 . venv/bin/activate
 pip install --requirement requirements.txt

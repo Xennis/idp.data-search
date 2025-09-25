@@ -12,5 +12,7 @@ jobs:
         python-version: '3.13'
     - name: Install dependencies
       run: pip install --requirement requirements.txt
+      working-directory: ./pipeline
     - name: Check lint and test
       run: make check
+      working-directory: ./pipeline
