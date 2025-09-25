@@ -4,3 +4,6 @@ venv/
 
 # Generated files
 pipeline/out/
+
+# Generated data
+web/public/data/*
