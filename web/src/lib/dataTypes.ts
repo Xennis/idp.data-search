@@ -9,7 +9,7 @@ export type IdpEntry = {
     originDatesNotafter?: string[];
     originPlaces: string[];
     provenancesLocated: string[];
-    mainLang: string[];
+    mainLang?: string[];
     sourceAuthority: string[];
     sourceAvailability: string[];
 };

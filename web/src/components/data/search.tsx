@@ -17,15 +17,17 @@ import {Check, ChevronsUpDownIcon} from "lucide-react";
 
 export const Search = ({items}: { items: Array<IdpEntry> }) => {
     const [query, setQuery] = useState("");
+    const [queryMainLang, setQueryMainLang] = useState("");
     const [size] = useState(getScrollbarSize);
     const [open, setOpen] = useState(false)
+    const [openMainLangs, setOpenMainLangs] = useState(false)
 
     // Create fue instance once
     const fuse = useMemo(() => {
         return new Fuse(items, {
             includeScore: true,
             threshold: 0.0, // 0.0 = strict
-            keys: ["material"]
+            keys: ["material", "mainLang"]
         });
     }, [items]);
 
@@ -40,13 +42,47 @@ export const Search = ({items}: { items: Array<IdpEntry> }) => {
         });
     }, [materials]);
 
+    const mainLangs: Array<string> = useMemo(() => {
+        return new Set(items.map(item => item.mainLang ?? []).flat()).values().toArray().toSorted();
+    }, [items]);
+
+    const fuseMainLangs = useMemo(() => {
+        return new Fuse(mainLangs, {
+            includeScore: true,
+            threshold: 0.3,
+        });
+    }, [mainLangs]);
+
+
+    const queryF: any = { $and: [] };
+
+    if (query) {
+        queryF.$and.push({ material: query });
+    }
+
+    if (queryMainLang) {
+        queryF.$and.push({ mainLang: queryMainLang });
+    }
+
+    const results = query || queryMainLang ? fuse.search(queryF).map((res) => res.item) : items;
+    /*
     const results = query
-        ? fuse.search(query).map((res) => res.item)
+        ? fuse.search({
+            $and: [
+                { material: query === "" ? undefined : query },
+                { mainLang: queryMainLang === "" ? undefined : queryMainLang }
+            ]
+        }).map((res) => res.item)
         : [];
+     */
 
     const resultMaterials: Array<string> = query
         ? fuseMaterials.search(query).map((res) => res.item)
         : materials;
+
+    const resultMainLangs: Array<string> = queryMainLang
+        ? fuseMainLangs.search(query).map((res) => res.item)
+        : mainLangs;
 
     return (
         <>
@@ -89,7 +125,7 @@ export const Search = ({items}: { items: Array<IdpEntry> }) => {
                                 </CommandItem>
                                 {resultMaterials.map((opt) => (
                                     <CommandItem
-                                        key={opt}
+                                        key={`material-${opt}`}
                                         value={opt}
                                         onSelect={(currentValue) => {
                                             setQuery(currentValue === query ? "" : currentValue)
@@ -101,6 +137,64 @@ export const Search = ({items}: { items: Array<IdpEntry> }) => {
                                             className={cn(
                                                 "ml-auto",
                                                 query === opt ? "opacity-100" : "opacity-0"
+                                            )}
+                                        />
+                                    </CommandItem>
+                                ))}
+                            </CommandList>
+                        </Command>
+                    </PopoverContent>
+                </Popover>
+                <Popover open={openMainLangs} onOpenChange={setOpenMainLangs}>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={open}
+                            className="w-[300px] justify-between"
+                        >
+                            {queryMainLang
+                                ? queryMainLang
+                                : "Select mainLang..."}
+                            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                        <Command>
+                            <CommandInput
+                                placeholder="Type or select a mainLang..."
+                                value={queryMainLang}
+                                onValueChange={(val) => {
+                                    setQueryMainLang(val)
+                                    //setSelected(null) // reset selection, falls man tippt
+                                }}
+                            />
+                            <CommandList>
+                                <CommandEmpty>No results. Press Enter for free text.</CommandEmpty>
+                                <CommandItem
+                                    key={`free-text-${queryMainLang}`}
+                                    value={queryMainLang}
+                                    onSelect={(currentValue) => {
+                                        setQueryMainLang(currentValue === queryMainLang ? "" : currentValue)
+                                        setOpenMainLangs(false)
+                                    }}
+                                >
+                                    {queryMainLang} (free text)
+                                </CommandItem>
+                                {resultMainLangs.map((opt) => (
+                                    <CommandItem
+                                        key={opt}
+                                        value={opt}
+                                        onSelect={(currentValue) => {
+                                            setQueryMainLang(currentValue === queryMainLang ? "" : currentValue)
+                                            setOpenMainLangs(false)
+                                        }}
+                                    >
+                                        {opt}
+                                        <Check
+                                            className={cn(
+                                                "ml-auto",
+                                                queryMainLang === opt ? "opacity-100" : "opacity-0"
                                             )}
                                         />
                                     </CommandItem>
@@ -122,6 +216,9 @@ export const Search = ({items}: { items: Array<IdpEntry> }) => {
                             </div>
                             <div
                                 className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>Material
+                            </div>
+                            <div
+                                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>MainLangs
                             </div>
                         </div>
                         <div className="shrink" style={{width: size}}/>
