@@ -32,7 +32,7 @@ export const Search = ({items}: { items: Array<IdpEntry> }) => {
     }, [items]);
 
     const materials: Array<string> = useMemo(() => {
-        return new Set(items.map(item => item.material).flat()).values().toArray().toSorted();
+        return new Set(items.map(item => item.material ?? []).flat()).values().toArray().toSorted();
     }, [items]);
 
     const fuseMaterials = useMemo(() => {
