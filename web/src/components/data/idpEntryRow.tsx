@@ -14,11 +14,11 @@ export function IdpEntryRow({index, entries, style}: RowComponentProps<{ entries
             <div
                 className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "w-20")}><a className="underline hover:no-underline" href={`https://www.trismegistos.org/text/${entry.tm}`} target="_blank">{entry.tm}</a></div>
             <div
-                className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>{entry.title.join(",")}</div>
+                className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>{(entry.title ?? []).join(",")}</div>
             <div
-                className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>{entry.material.map((material) => (<Badge variant="outline">{material}</Badge>))}</div>
+                className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>{(entry.material ?? []).map((material, index) => (<Badge key={index} variant="outline">{material}</Badge>))}</div>
             <div
-                className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>{(entry.mainLang ?? []).map((mainLang) => (<Badge variant="outline">{mainLang}</Badge>))}</div>
+                className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", "flex-1")}>{(entry.mainLang ?? []).map((mainLang, index) => (<Badge key={index} variant="outline">{mainLang}</Badge>))}</div>
         </div>
     );
 }
