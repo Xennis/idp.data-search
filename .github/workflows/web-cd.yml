@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         working-directory: ./web
+      - name: Download data
+        run: ./download_data.sh
+        working-directory: ./web
       - name: Build with Next.js
         run: pnpm build
         working-directory: ./web
