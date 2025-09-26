@@ -25,18 +25,13 @@ def append_cache(cache: dict[str, list[V]], tm: V, values: Optional[list[str]]) 
         cache[value].append(tm)
 
 
-def write_relation_file(filename: str, entries: dict[str, list[V]], key) -> None:
+def write_relation_file(filename: str, entries: dict[str, list[V]]) -> None:
+    result = []
+    for value, tms in sort_dict_by_keys(entries).items():
+        result.append({"value": value, "tmCount": len(tms)})
+
     with open(filename, "w") as terms_f:
-        for term, tms in sort_dict_by_keys(entries).items():
-            terms_f.write(
-                json.dumps(
-                    {
-                        key: term,
-                        "tms": tms,
-                    }
-                )
-                + "\n"
-            )
+        terms_f.write(json.dumps(result, separators=(",", ":")))
 
 
 def relations(output_dir: str) -> None:
@@ -44,9 +39,9 @@ def relations(output_dir: str) -> None:
     materials_cache: dict[str, list[Any]] = {}
     main_langs_cache: dict[str, list[Any]] = {}
 
-    with open(os.path.join(output_dir, "ipd-data-sheet.jsonl")) as data_r:
-        for line in data_r.readlines():
-            entry = json.loads(line)
+    with open(os.path.join(output_dir, "ipd-data-sheet.json")) as data_r:
+        entries = json.load(data_r)
+        for entry in entries:
 
             tm: str = entry["tm"]
             assert isinstance(tm, str), "tm should be a string"
@@ -55,6 +50,6 @@ def relations(output_dir: str) -> None:
             append_cache(materials_cache, tm=tm, values=entry.get("material"))
             append_cache(main_langs_cache, tm=tm, values=entry.get("mainLang"))
 
-    write_relation_file(os.path.join(output_dir, "terms.jsonl"), terms_cache, key="term")
-    write_relation_file(os.path.join(output_dir, "materials.jsonl"), materials_cache, key="material")
-    write_relation_file(os.path.join(output_dir, "mainLangs.jsonl"), main_langs_cache, key="mainLang")
+    write_relation_file(os.path.join(output_dir, "terms.json"), terms_cache)
+    write_relation_file(os.path.join(output_dir, "materials.json"), materials_cache)
+    write_relation_file(os.path.join(output_dir, "mainLangs.json"), main_langs_cache)
