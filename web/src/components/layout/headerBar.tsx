@@ -21,7 +21,7 @@ export const HeaderBar = () => {
           Materials
         </Link>
         <Link className="hover:underline" href={termsPages}>
-          Teams
+          Terms
         </Link>
       </div>
     </header>
