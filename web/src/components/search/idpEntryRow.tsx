@@ -33,6 +33,9 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
       <div className={cn("p-2 align-middle whitespace-nowrap", "w-32")}>
         {entry.mainLang && <TruncatedBadges values={entry.mainLang} maxBadges={2} maxStringLength={20} />}
       </div>
+      <div className={cn("p-2 align-middle whitespace-nowrap", "w-32")}>
+        {entry.foreignLang && <TruncatedBadges values={entry.foreignLang.map((fr) => Object.keys(fr)).flat()} maxBadges={2} maxStringLength={20} />}
+      </div>
       <div className={cn("p-2 align-middle whitespace-nowrap", "flex-1")}>
         {entry.terms && <TruncatedBadges values={entry.terms} maxBadges={6} maxStringLength={20} />}
       </div>
