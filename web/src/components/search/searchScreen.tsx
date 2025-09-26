@@ -130,7 +130,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
       </div>
       <div className="flex flex-row gap-2 py-4">
         <span>{results.length} hits </span>
-        {queryMaterial || queryMainLang || (queryTerm && <span>for </span>)}
+        {(queryMaterial || queryMainLang || queryTerm) && <span>for </span>}
         {queryMaterial && (
           <Badge>
             <span>Material: {queryMaterial}</span>
