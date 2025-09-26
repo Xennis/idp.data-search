@@ -232,7 +232,6 @@ export const Search = ({items}: { items: Array<IdpEntry> }) => {
                         />
                     </div>
                 </div>
-
             </div>
         </>
 
