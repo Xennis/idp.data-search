@@ -161,10 +161,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
           <div className={cn("border-b", "flex flex-row")}>
             <div className="flex grow flex-row">
               <div
-                className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
-                  "w-20",
-                )}
+                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-20")}
               >
                 TM
               </div>
@@ -177,26 +174,17 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
                 Title
               </div>
               <div
-                className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
-                  "w-32",
-                )}
+                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
               >
                 Material
               </div>
               <div
-                className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
-                  "w-32",
-                )}
+                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
               >
                 MainLang
               </div>
               <div
-                className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
-                  "w-32",
-                )}
+                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
               >
                 ForeignLang
               </div>

@@ -1,49 +1,31 @@
 "use client"
 
-import { ReactNode, useState } from "react"
+import { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { Loader2Icon } from "lucide-react"
+import useSWR from "swr"
 
 type LoadDataProps<T> = {
   fetchUrl: string
   children: (items: T[]) => ReactNode
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
 export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
-  const [loading, setLoading] = useState(false)
-  const [items, setItems] = useState<Array<T>>(() => {
-    try {
-      const cached = localStorage.getItem(fetchUrl)
-      return cached ? JSON.parse(cached) : []
-    } catch (e) {
-      console.warn("Failed to retrieve data from localStorage:", e)
-      return []
-    }
-  })
+  const { data, error, isLoading } = useSWR(fetchUrl, fetcher)
 
-  const handleOnClick = async () => {
-    setLoading(true)
-    const res = await fetch(fetchUrl)
-    if (res.ok) {
-      const data = await res.json()
-      try {
-        localStorage.setItem(fetchUrl, JSON.stringify(data))
-      } catch (error) {
-        console.warn("Failed to store data in localStorage:", error)
-      }
-      setItems(data)
-    }
-    setLoading(false)
-  }
-
-  if (items.length === 0) {
+  if (isLoading) {
     return (
-      <Button className="bg-teal-700" disabled={loading} onClick={handleOnClick}>
-        {loading && <Loader2Icon className="animate-spin" />}
+      <Button className="bg-teal-700" disabled={isLoading}>
+        {isLoading && <Loader2Icon className="animate-spin" />}
         Load Data
       </Button>
     )
   }
+  if (error) {
+    return <div>Error loading data</div>
+  }
 
-  return <>{children(items)}</>
+  return <>{children(data)}</>
 }
