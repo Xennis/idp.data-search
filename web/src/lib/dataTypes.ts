@@ -1,3 +1,5 @@
+import { languageUrlParam, materialUrlParam, termUrlParam } from "@/lib/config"
+
 export type IdpEntry = {
   tm: string
   sourceFiles: string[]
@@ -25,18 +27,21 @@ export const fieldMetadata = {
     fetchUrl: "/data/mainLangs.json",
     searchPlaceholder: "Search for a language",
     tableWidth: "300px",
+    queryParam: languageUrlParam,
   },
   materials: {
     title: "Materials",
     fetchUrl: "/data/materials.json",
     searchPlaceholder: "Search for a material",
     tableWidth: "500px",
+    queryParam: materialUrlParam,
   },
   terms: {
     title: "Terms",
     fetchUrl: "/data/terms.json",
     searchPlaceholder: "Search for a term",
     tableWidth: "1200px",
+    queryParam: termUrlParam,
   },
 } as const
 
@@ -45,5 +50,6 @@ export type FieldMetadata = {
   fetchUrl: string
   searchPlaceholder: string
   tableWidth: string
+  queryParam: string
 }
 export type FieldKey = keyof typeof fieldMetadata
