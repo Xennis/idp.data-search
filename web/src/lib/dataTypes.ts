@@ -27,6 +27,7 @@ export const fieldMetadata = {
     fetchUrl: "/data/mainLangs.json",
     searchPlaceholder: "Search for a language",
     tableWidth: "300px",
+    truncateLength: 25,
     queryParam: languageUrlParam,
   },
   materials: {
@@ -34,13 +35,15 @@ export const fieldMetadata = {
     fetchUrl: "/data/materials.json",
     searchPlaceholder: "Search for a material",
     tableWidth: "500px",
+    truncateLength: 50,
     queryParam: materialUrlParam,
   },
   terms: {
     title: "Terms",
     fetchUrl: "/data/terms.json",
     searchPlaceholder: "Search for a term",
-    tableWidth: "1200px",
+    tableWidth: "1000px",
+    truncateLength: 100,
     queryParam: termUrlParam,
   },
 } as const
@@ -50,6 +53,7 @@ export type FieldMetadata = {
   fetchUrl: string
   searchPlaceholder: string
   tableWidth: string
+  truncateLength: number
   queryParam: string
 }
 export type FieldKey = keyof typeof fieldMetadata
