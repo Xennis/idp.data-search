@@ -2,7 +2,7 @@
 
 import { IdpEntry } from "@/lib/dataTypes"
 import { useMemo, useState } from "react"
-import Fuse from "fuse.js"
+import Fuse, { Expression } from "fuse.js"
 import { getScrollbarSize, List } from "react-window"
 import { IdpEntryRow } from "@/components/data/idpEntryRow"
 import { cn } from "@/lib/utils"
@@ -49,14 +49,14 @@ export const Search = ({ items }: { items: Array<IdpEntry> }) => {
     })
   }, [mainLangs])
 
-  const queryF: any = { $and: [] }
+  const queryF: Expression = { $and: [] }
 
   if (query) {
-    queryF.$and.push({ material: query })
+    queryF.$and!.push({ material: query })
   }
 
   if (queryMainLang) {
-    queryF.$and.push({ mainLang: queryMainLang })
+    queryF.$and!.push({ mainLang: queryMainLang })
   }
 
   const results = query || queryMainLang ? fuse.search(queryF).map((res) => res.item) : items
