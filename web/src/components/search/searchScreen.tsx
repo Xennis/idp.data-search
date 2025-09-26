@@ -162,7 +162,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
             <div className="flex grow flex-row">
               <div
                 className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
                   "w-20",
                 )}
               >
@@ -170,7 +170,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               </div>
               <div
                 className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
                   "flex-1",
                 )}
               >
@@ -178,7 +178,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               </div>
               <div
                 className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
                   "w-32",
                 )}
               >
@@ -186,7 +186,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               </div>
               <div
                 className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
                   "w-32",
                 )}
               >
@@ -194,7 +194,15 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               </div>
               <div
                 className={cn(
-                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
+                  "w-32",
+                )}
+              >
+                ForeignLang
+              </div>
+              <div
+                className={cn(
+                  "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap",
                   "flex-1",
                 )}
               >

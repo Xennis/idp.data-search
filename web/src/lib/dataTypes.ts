@@ -12,6 +12,7 @@ export type IdpEntry = {
   originPlaces: string[]
   provenancesLocated: string[]
   mainLang?: string[]
+  foreignLang?: Record<string, number>[]
   sourceAuthority: string[]
   sourceAvailability: string[]
 }
