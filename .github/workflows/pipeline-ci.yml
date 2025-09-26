@@ -1,7 +1,9 @@
-name: Python
-on: push
+name: Pipeline CI
+on:
+  pull_request:
+    branches: ["main"]
 jobs:
-  check:
+  pipeline-ci:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
