@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# Build artifacts
+.next/
+dist/
+out/
+
+# vercel
+.vercel
+
+# typescript
+next-env.d.ts
+
+# pnpm
+pnpm-lock.yaml
+
+# Controlled by Shadcn/ui CLI
+components.json
+src/components/ui/
+
+# Local data
+public/data/
