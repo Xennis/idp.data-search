@@ -161,7 +161,7 @@ def main(data_path: str, sources: list[str], step: Optional[str], format: str):
         merge(format=format)
 
     # Step 4: Create relations
-    if (step is None and format == formatJsonl) or step == "relations":
+    if (step is None and format == formatJson) or step == "relations":
         relations(output_dir=output_dir)
 
 
