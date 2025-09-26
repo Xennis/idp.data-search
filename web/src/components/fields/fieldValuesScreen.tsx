@@ -1,15 +1,22 @@
 "use client"
 
 import { FieldMetadata, FieldValue } from "@/lib/dataTypes"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Fuse from "fuse.js"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { List } from "react-window"
 import { FieldValueRow } from "@/components/fields/fieldValueRow"
+import { useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
+
+const queryUrlParam = "q"
 
 export const FieldValuesScreen = ({ items, metadata }: { items: Array<FieldValue>; metadata: FieldMetadata }) => {
-  const [query, setQuery] = useState("")
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const initialQuery = searchParams.get(queryUrlParam) || ""
+  const [query, setQuery] = useState(initialQuery)
 
   const fuse = useMemo(() => {
     return new Fuse(items, {
@@ -18,6 +25,17 @@ export const FieldValuesScreen = ({ items, metadata }: { items: Array<FieldValue
       keys: ["value"],
     })
   }, [items])
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (query) {
+      params.set(queryUrlParam, query)
+    } else {
+      params.delete(queryUrlParam)
+    }
+
+    router.replace(`?${params.toString()}`)
+  }, [query, router, searchParams])
 
   const results = query ? fuse.search(query).map((result) => result.item) : items
 
