@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 
 export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entries: IdpEntry[] }>) {
   const entry = entries[index]
+  const title = (entry.title ?? []).join(",")
   return (
     <div
       className={cn("hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", "flex flex-row")}
@@ -32,7 +33,37 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
           "flex-1",
         )}
       >
-        {(entry.title ?? []).join(",")}
+        {title.slice(0, 75)}
+        {title.length > 75 ? "..." : ""}
+      </div>
+      <div
+        className={cn(
+          "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+          "w-32",
+        )}
+      >
+        <div className="flex flex-row gap-0.5">
+          {(entry.material ?? []).map((material, index) => (
+            <Badge key={index} variant="outline">
+              {material.slice(0, 25)}
+              {material.length > 25 ? "..." : ""}
+            </Badge>
+          ))}
+        </div>
+      </div>
+      <div
+        className={cn(
+          "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+          "w-32",
+        )}
+      >
+        <div className="flex flex-row gap-0.5">
+          {(entry.mainLang ?? []).map((mainLang, index) => (
+            <Badge key={index} variant="outline">
+              {mainLang}
+            </Badge>
+          ))}
+        </div>
       </div>
       <div
         className={cn(
@@ -40,35 +71,21 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
           "flex-1",
         )}
       >
-        {(entry.material ?? []).map((material, index) => (
-          <Badge key={index} variant="outline">
-            {material}
-          </Badge>
-        ))}
-      </div>
-      <div
-        className={cn(
-          "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-          "flex-1",
-        )}
-      >
-        {(entry.mainLang ?? []).map((mainLang, index) => (
-          <Badge key={index} variant="outline">
-            {mainLang}
-          </Badge>
-        ))}
-      </div>
-      <div
-        className={cn(
-          "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-          "flex-1",
-        )}
-      >
-        {(entry.terms ?? []).map((mainLang, index) => (
-          <Badge key={index} variant="outline">
-            {mainLang}
-          </Badge>
-        ))}
+        <div className="flex flex-row gap-0.5">
+          {(entry.terms ?? []).slice(0, 7).map((term, index) => (
+            <Badge key={index} variant="outline">
+              {term.slice(0, 20)}
+              {term.length > 20 ? "..." : ""}
+            </Badge>
+          ))}
+          {(entry.terms ?? []).length > 7 ? (
+            <Badge key="more" variant="outline">
+              ...
+            </Badge>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
     </div>
   )

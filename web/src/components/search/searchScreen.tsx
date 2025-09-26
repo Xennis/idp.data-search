@@ -46,20 +46,20 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
     return new Fuse(items, {
       includeScore: true,
       threshold: 0.0, // 0.0 = strict
-      keys: ["material", "mainLang", "term"],
+      keys: ["material", "mainLang", "terms"],
     })
   }, [items])
 
-  const terms: Array<string> = useMemo(() => {
-    return new Set(items.map((item) => item.terms ?? []).flat()).values().toArray().toSorted()
-  }, [items])
+  // const terms: Array<string> = useMemo(() => {
+  //   return new Set(items.map((item) => item.terms ?? []).flat()).values().toArray().toSorted()
+  // }, [items])
 
-  const fuseTerms = useMemo(() => {
-    return new Fuse(terms, {
-      includeScore: true,
-      threshold: 0.3,
-    })
-  }, [terms])
+  // const fuseTerms = useMemo(() => {
+  //   return new Fuse(terms, {
+  //     includeScore: true,
+  //     threshold: 0.3,
+  //   })
+  // }, [terms])
 
   const materials: Array<string> = useMemo(() => {
     return new Set(items.map((item) => item.material ?? []).flat()).values().toArray().toSorted()
@@ -84,16 +84,17 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
   }, [mainLangs])
 
   const queryF: Expression = { $and: [] }
-
   if (queryMaterial) {
     queryF.$and!.push({ material: queryMaterial })
   }
-
   if (queryMainLang) {
     queryF.$and!.push({ mainLang: queryMainLang })
   }
+  if (queryTerm) {
+    queryF.$and!.push({ terms: queryTerm })
+  }
 
-  const results = queryMaterial || queryMainLang ? fuse.search(queryF).map((res) => res.item) : items
+  const results = queryMaterial || queryMainLang || queryTerm ? fuse.search(queryF).map((res) => res.item) : items
   const resultMaterials: Array<string> = queryMaterial
     ? fuseMaterials.search(queryMaterial).map((res) => res.item)
     : materials
@@ -128,7 +129,8 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
         />
       </div>
       <div className="flex flex-row gap-2 py-4">
-        <span>{results.length} hits for </span>
+        <span>{results.length} hits </span>
+        {queryMaterial || queryMainLang || (queryTerm && <span>for </span>)}
         {queryMaterial && (
           <Badge>
             <span>Material: {queryMaterial}</span>
@@ -177,7 +179,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               <div
                 className={cn(
                   "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-                  "flex-1",
+                  "w-32",
                 )}
               >
                 Material
@@ -185,10 +187,10 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               <div
                 className={cn(
                   "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-                  "flex-1",
+                  "w-32",
                 )}
               >
-                MainLangs
+                MainLang
               </div>
               <div
                 className={cn(
