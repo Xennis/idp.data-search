@@ -1,7 +1,8 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // static site (both will be set by CI automatically)
+  // output: "export",
 }
 
 export default nextConfig
