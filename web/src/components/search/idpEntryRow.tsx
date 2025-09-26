@@ -4,10 +4,11 @@ import { type RowComponentProps } from "react-window"
 import { IdpEntry } from "@/lib/dataTypes"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entries: IdpEntry[] }>) {
   const entry = entries[index]
-  const title = (entry.title ?? []).join(",")
+  const title = (entry.title ?? []).join(", ")
   return (
     <div
       className={cn("hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", "flex flex-row")}
@@ -74,14 +75,27 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
         <div className="flex flex-row gap-0.5">
           {(entry.terms ?? []).slice(0, 7).map((term, index) => (
             <Badge key={index} variant="outline">
-              {term.slice(0, 20)}
-              {term.length > 20 ? "..." : ""}
+              {term.length > 20 ? (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span>{term.slice(0, 20)}...</span>
+                  </TooltipTrigger>
+                  <TooltipContent>{term}</TooltipContent>
+                </Tooltip>
+              ) : (
+                <>{term}</>
+              )}
             </Badge>
           ))}
           {(entry.terms ?? []).length > 7 ? (
-            <Badge key="more" variant="outline">
-              ...
-            </Badge>
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge key="more" variant="outline">
+                  ...
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>{(entry.terms ?? []).slice(7).join(", ")}</TooltipContent>
+            </Tooltip>
           ) : (
             ""
           )}
