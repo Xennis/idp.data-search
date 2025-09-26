@@ -11,13 +11,27 @@ type LoadDataProps<T> = {
 
 export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
   const [loading, setLoading] = useState(false)
-  const [items, setItems] = useState<Array<T>>([])
+  const [items, setItems] = useState<Array<T>>(() => {
+    try {
+      const cached = localStorage.getItem(fetchUrl)
+      return cached ? JSON.parse(cached) : []
+    } catch (e) {
+      console.warn("Failed to retrieve data from localStorage:", e)
+      return []
+    }
+  })
 
   const handleOnClick = async () => {
     setLoading(true)
     const res = await fetch(fetchUrl)
     if (res.ok) {
-      setItems(await res.json())
+      const data = await res.json()
+      try {
+        localStorage.setItem(fetchUrl, JSON.stringify(data))
+      } catch (error) {
+        console.warn("Failed to store data in localStorage:", error)
+      }
+      setItems(data)
     }
     setLoading(false)
   }
