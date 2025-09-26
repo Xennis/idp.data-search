@@ -1,0 +1,19 @@
+name: Web CI
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  web-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: |
+            cwd: ./web
+            args: [--frozen-lockfile]
+      - name: Check code format
+        run: pnpm run format:check
+        working-directory: ./web
