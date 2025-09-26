@@ -3,8 +3,15 @@
 import { type RowComponentProps } from "react-window"
 import { FieldValue } from "@/lib/dataTypes"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { searchPage } from "@/lib/config"
 
-export function FieldValueRow({ index, entries, style }: RowComponentProps<{ entries: FieldValue[] }>) {
+export function FieldValueRow({
+  index,
+  entries,
+  queryParam,
+  style,
+}: RowComponentProps<{ entries: FieldValue[]; queryParam: string }>) {
   const entry = entries[index]
   return (
     <div
@@ -25,7 +32,12 @@ export function FieldValueRow({ index, entries, style }: RowComponentProps<{ ent
           "w-24",
         )}
       >
-        {entry.tmCount}
+        <Link
+          className="underline hover:no-underline"
+          href={`${searchPage}?${queryParam}=${encodeURIComponent(entry.value)}`}
+        >
+          {entry.tmCount}
+        </Link>
       </div>
     </div>
   )

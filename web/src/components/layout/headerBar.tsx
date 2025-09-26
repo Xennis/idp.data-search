@@ -1,4 +1,4 @@
-import { homePage, languagesPages, materialsPages, termsPages } from "@/lib/config"
+import { homePage, languagesPages, materialsPages, searchPage, termsPages } from "@/lib/config"
 import Link from "next/link"
 
 export const HeaderBar = () => {
@@ -10,6 +10,9 @@ export const HeaderBar = () => {
             <span className="font-semibold">IDP</span>
             Search 😎
           </span>
+        </Link>
+        <Link className="hover:underline" href={searchPage}>
+          Search
         </Link>
         <Link className="hover:underline" href={languagesPages}>
           Languages

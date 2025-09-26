@@ -58,6 +58,18 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
           </Badge>
         ))}
       </div>
+      <div
+        className={cn(
+          "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+          "flex-1",
+        )}
+      >
+        {(entry.terms ?? []).map((mainLang, index) => (
+          <Badge key={index} variant="outline">
+            {mainLang}
+          </Badge>
+        ))}
+      </div>
     </div>
   )
 }

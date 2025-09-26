@@ -15,8 +15,7 @@ const queryUrlParam = "q"
 export const FieldValuesScreen = ({ items, metadata }: { items: Array<FieldValue>; metadata: FieldMetadata }) => {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const initialQuery = searchParams.get(queryUrlParam) || ""
-  const [query, setQuery] = useState(initialQuery)
+  const [query, setQuery] = useState(searchParams.get(queryUrlParam) || "")
 
   const fuse = useMemo(() => {
     return new Fuse(items, {
@@ -40,7 +39,7 @@ export const FieldValuesScreen = ({ items, metadata }: { items: Array<FieldValue
   const results = query ? fuse.search(query).map((result) => result.item) : items
 
   return (
-    <div className="p-4">
+    <div className="py-4">
       <div className="flex content-center">
         <Input
           className="max-w-[300px]"
@@ -77,7 +76,11 @@ export const FieldValuesScreen = ({ items, metadata }: { items: Array<FieldValue
             rowComponent={FieldValueRow}
             rowCount={results.length}
             rowHeight={50}
-            rowProps={results ? { entries: results } : { entries: items }}
+            rowProps={
+              results
+                ? { entries: results, queryParam: metadata.queryParam }
+                : { entries: items, queryParam: metadata.queryParam }
+            }
           />
         </div>
       </div>
