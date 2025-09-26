@@ -78,8 +78,8 @@ export const FieldValuesScreen = ({ items, metadata }: { items: Array<FieldValue
             rowHeight={50}
             rowProps={
               results
-                ? { entries: results, queryParam: metadata.queryParam }
-                : { entries: items, queryParam: metadata.queryParam }
+                ? { entries: results, queryParam: metadata.queryParam, truncateLength: metadata.truncateLength }
+                : { entries: items, queryParam: metadata.queryParam, truncateLength: metadata.truncateLength }
             }
           />
         </div>
