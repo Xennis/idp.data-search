@@ -1,18 +1,21 @@
 "use client"
 
-import {useState} from "react";
-import {IdpEntry} from "@/lib/dataTypes";
+import {ReactNode, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Loader2Icon} from "lucide-react";
-import {Search} from "@/components/data/search";
 
-export const LoadData = () => {
+type LoadDataProps<T> = {
+    fetchUrl: string;
+    children: (items: T[]) => ReactNode;
+};
+
+export const LoadData = <T, >({fetchUrl, children}: LoadDataProps<T>) => {
     const [loading, setLoading] = useState(false);
-    const [items, setItems] = useState<Array<IdpEntry>>([]);
+    const [items, setItems] = useState<Array<T>>([]);
 
     const handleOnClick = async () => {
         setLoading(true);
-        const res = await fetch("/data/ipd-data-sheet.json");
+        const res = await fetch(fetchUrl);
         if (res.ok) {
             setItems(await res.json());
         }
@@ -28,7 +31,5 @@ export const LoadData = () => {
         </div>
     }
 
-    return <>
-        <Search items={items}/>
-    </>
+    return <>{children(items)}</>;
 }
