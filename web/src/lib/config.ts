@@ -1,4 +1,5 @@
 export const homePage = "/"
+export const searchPage = "/search"
 export const languagesPages = "/data/languages"
 export const materialsPages = "/data/materials"
 export const termsPages = "/data/terms"

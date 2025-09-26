@@ -38,12 +38,10 @@ export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
 
   if (items.length === 0) {
     return (
-      <div className="flex h-full justify-center p-5">
-        <Button size="sm" disabled={loading} onClick={handleOnClick}>
-          {loading && <Loader2Icon className="animate-spin" />}
-          Load Data
-        </Button>
-      </div>
+      <Button className="bg-teal-700" disabled={loading} onClick={handleOnClick}>
+        {loading && <Loader2Icon className="animate-spin" />}
+        Load Data
+      </Button>
     )
   }
 

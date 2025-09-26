@@ -4,14 +4,14 @@ import { IdpEntry } from "@/lib/dataTypes"
 import { useMemo, useState } from "react"
 import Fuse, { Expression } from "fuse.js"
 import { getScrollbarSize, List } from "react-window"
-import { IdpEntryRow } from "@/components/data/idpEntryRow"
+import { IdpEntryRow } from "@/components/search/idpEntryRow"
 import { cn } from "@/lib/utils"
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Check, ChevronsUpDownIcon } from "lucide-react"
 
-export const Search = ({ items }: { items: Array<IdpEntry> }) => {
+export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
   const [query, setQuery] = useState("")
   const [queryMainLang, setQueryMainLang] = useState("")
   const [size] = useState(getScrollbarSize)

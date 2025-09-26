@@ -15,7 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <HeaderBar />
-        {children}
+        <div className="px-4 md:px-8">{children}</div>
         <Footer />
       </body>
     </html>
