@@ -41,7 +41,7 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
         )}
       </div>
       <div className={cn("p-2 align-middle whitespace-nowrap", "flex-1")}>
-        {entry.terms && <TruncatedBadges values={entry.terms} maxBadges={6} maxStringLength={20} />}
+        {entry.terms && <TruncatedBadges values={entry.terms} maxBadges={5} maxStringLength={18} />}
       </div>
     </div>
   )
