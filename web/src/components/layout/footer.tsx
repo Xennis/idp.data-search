@@ -1,6 +1,6 @@
 export const Footer = () => {
   return (
-    <footer className="mx-4 mt-20 mb-10 border-t pt-4">
+    <footer className="mx-4 mt-20 mb-8 border-t pt-4">
       <div className="text-sm text-gray-600">
         The data is from the project{" "}
         <a className="underline hover:no-underline" href="https://github.com/papyri/idp.data" target="_blank">

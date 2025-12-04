@@ -6,18 +6,29 @@ import Fuse, { Expression } from "fuse.js"
 import { getScrollbarSize, List } from "react-window"
 import { IdpEntryRow } from "@/components/search/idpEntryRow"
 import { cn } from "@/lib/utils"
-import { X } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown, X } from "lucide-react"
 import { DropdownSelect } from "@/components/search/dropdownSelect"
 import { Badge } from "@/components/ui/badge"
 import { useRouter, useSearchParams } from "next/navigation"
-import { languageUrlParam, materialUrlParam, termUrlParam } from "@/lib/config"
+import { languageUrlParam, materialUrlParam, sortFieldUrlParam, sortOrderUrlParam, termUrlParam } from "@/lib/config"
+import { Button } from "@/components/ui/button"
+
+const fieldMainLang = "mainLang"
+const fieldMaterial = "material"
+const fieldForeignLang = "ForeignLang"
+const sortAsc = "asc"
+const sortDesc = "desc"
 
 export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [queryMaterial, setQueryMaterial] = useState(searchParams.get(materialUrlParam) || "")
-  const [queryMainLang, setQueryMainLang] = useState(searchParams.get(languageUrlParam) || "")
-  const [queryTerm, setQueryTerm] = useState(searchParams.get(termUrlParam) || "")
+  const [queryMaterial, setQueryMaterial] = useState<string>(searchParams.get(materialUrlParam) || "")
+  const [queryMainLang, setQueryMainLang] = useState<string>(searchParams.get(languageUrlParam) || "")
+  const [queryTerm, setQueryTerm] = useState<string>(searchParams.get(termUrlParam) || "")
+  const [sortField, setSortField] = useState<string | null>(searchParams.get(sortFieldUrlParam))
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
+    searchParams.get(sortOrderUrlParam) === sortDesc ? sortDesc : sortAsc,
+  )
   const [size] = useState(getScrollbarSize)
 
   useEffect(() => {
@@ -37,16 +48,26 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
     } else {
       params.delete(termUrlParam)
     }
+    if (sortField) {
+      params.set(sortFieldUrlParam, sortField)
+    } else {
+      params.delete(sortFieldUrlParam)
+    }
+    if (sortOrder && sortOrder === sortDesc) {
+      params.set(sortOrderUrlParam, sortOrder)
+    } else {
+      params.delete(sortOrderUrlParam)
+    }
 
     router.replace(`?${params.toString()}`)
-  }, [queryMaterial, queryMainLang, queryTerm, router, searchParams])
+  }, [queryMaterial, queryMainLang, queryTerm, sortField, sortOrder, router, searchParams])
 
   // Create fue instance once
   const fuse = useMemo(() => {
     return new Fuse(items, {
       includeScore: true,
       threshold: 0.0, // 0.0 = strict
-      keys: ["material", "mainLang", "terms"],
+      keys: [fieldMaterial, fieldMainLang, "terms"],
     })
   }, [items])
 
@@ -94,7 +115,35 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
     queryF.$and!.push({ terms: queryTerm })
   }
 
-  const results = queryMaterial || queryMainLang || queryTerm ? fuse.search(queryF).map((res) => res.item) : items
+  const results: IdpEntry[] =
+    queryMaterial || queryMainLang || queryTerm ? fuse.search(queryF).map((res) => res.item) : items
+  const orderedResults = useMemo(() => {
+    return results.slice().sort((a, b) => {
+      let aVal = ""
+      let bVal = ""
+
+      switch (sortField) {
+        case fieldMainLang:
+          aVal = a.mainLang?.[0] ?? ""
+          bVal = b.mainLang?.[0] ?? ""
+          break
+
+        case fieldMaterial:
+          aVal = a.material?.[0] ?? ""
+          bVal = b.material?.[0] ?? ""
+          break
+
+        case fieldForeignLang:
+          aVal = a.foreignLang?.[0] ? Object.keys(a.foreignLang[0])[0] : ""
+          bVal = b.foreignLang?.[0] ? Object.keys(b.foreignLang[0])[0] : ""
+          break
+      }
+
+      const direction = sortOrder === sortDesc ? -1 : 1
+      return direction * aVal.localeCompare(bVal)
+    })
+  }, [results, sortField, sortOrder])
+
   const resultMaterials: Array<string> = queryMaterial
     ? fuseMaterials.search(queryMaterial).map((res) => res.item)
     : materials
@@ -129,7 +178,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
         />
       </div>
       <div className="flex flex-row gap-2 py-4">
-        <span>{results.length} hits </span>
+        <span>{orderedResults.length} hits </span>
         {(queryMaterial || queryMainLang || queryTerm) && <span>for </span>}
         {queryMaterial && (
           <Badge>
@@ -156,7 +205,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
           </Badge>
         )}
       </div>
-      <div className="p-4">
+      <div className="py-4">
         <div className="flex h-[500px] flex-col">
           <div className={cn("border-b", "flex flex-row")}>
             <div className="flex grow flex-row">
@@ -176,17 +225,50 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
               <div
                 className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
               >
-                Material
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSortField(fieldMaterial)
+                    setSortOrder(sortOrder === sortAsc ? sortDesc : sortAsc)
+                  }}
+                >
+                  Material
+                  {sortField === fieldMaterial ? sortOrder === sortDesc ? <ArrowDown /> : <ArrowUp /> : <ArrowUpDown />}
+                </Button>
               </div>
               <div
                 className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
               >
-                MainLang
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSortField(fieldMainLang)
+                    setSortOrder(sortOrder === sortAsc ? sortDesc : sortAsc)
+                  }}
+                >
+                  Lang
+                  {sortField === fieldMainLang ? sortOrder === sortDesc ? <ArrowDown /> : <ArrowUp /> : <ArrowUpDown />}
+                </Button>
               </div>
-              <div
-                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
-              >
-                ForeignLang
+              <div className={cn("text-foreground h-10 px-2 text-left align-middle font-medium", "w-32")}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSortField(fieldForeignLang)
+                    setSortOrder(sortOrder === sortAsc ? sortDesc : sortAsc)
+                  }}
+                >
+                  Foreign
+                  {sortField === fieldForeignLang ? (
+                    sortOrder === sortDesc ? (
+                      <ArrowDown />
+                    ) : (
+                      <ArrowUp />
+                    )
+                  ) : (
+                    <ArrowUpDown />
+                  )}
+                </Button>
               </div>
               <div
                 className={cn(
@@ -202,9 +284,9 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
           <div className="overflow-hidden">
             <List
               rowComponent={IdpEntryRow}
-              rowCount={results.length}
+              rowCount={orderedResults.length}
               rowHeight={50}
-              rowProps={results ? { entries: results } : { entries: items }}
+              rowProps={{ entries: orderedResults }}
             />
           </div>
         </div>
