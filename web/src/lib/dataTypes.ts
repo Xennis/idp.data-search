@@ -15,6 +15,7 @@ export type IdpEntry = {
   foreignLang?: Record<string, number>[]
   sourceAuthority: string[]
   sourceAvailability: string[]
+  region?: string
 }
 
 export type FieldValue = {

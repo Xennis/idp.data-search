@@ -4,6 +4,7 @@ import { type RowComponentProps } from "react-window"
 import { IdpEntry } from "@/lib/dataTypes"
 import { cn } from "@/lib/utils"
 import { TruncatedBadges, TruncatedString } from "@/components/layout/truncated"
+import { Badge } from "@/components/ui/badge"
 
 export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entries: IdpEntry[] }>) {
   const entry = entries[index]
@@ -24,6 +25,13 @@ export function IdpEntryRow({ index, entries, style }: RowComponentProps<{ entri
       </div>
       <div className={cn("p-2 align-middle whitespace-nowrap", "flex-1")}>
         <TruncatedString value={title} maxLength={75} />
+      </div>
+      <div className={cn("p-2 align-middle whitespace-nowrap", "w-32")}>
+        {entry.region && (
+          <Badge variant="outline">
+            <TruncatedString value={entry.region} maxLength={10} />
+          </Badge>
+        )}
       </div>
       <div className={cn("p-2 align-middle whitespace-nowrap", "w-32")}>
         {entry.material && <TruncatedBadges values={entry.material} maxBadges={2} maxStringLength={25} />}
