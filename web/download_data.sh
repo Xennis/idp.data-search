@@ -7,6 +7,7 @@ FILES=(
   "mainLangs.json"
   "materials.json"
   "terms.json"
+  "VERSION"
 )
 BASE_URL="https://raw.githubusercontent.com/Xennis/idp.data-search/web-data/data"
 

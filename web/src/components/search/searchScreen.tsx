@@ -10,12 +10,21 @@ import { ArrowDown, ArrowUp, ArrowUpDown, X } from "lucide-react"
 import { DropdownSelect } from "@/components/search/dropdownSelect"
 import { Badge } from "@/components/ui/badge"
 import { useRouter, useSearchParams } from "next/navigation"
-import { languageUrlParam, materialUrlParam, sortFieldUrlParam, sortOrderUrlParam, termUrlParam } from "@/lib/config"
+import {
+  languageUrlParam,
+  materialUrlParam,
+  regionUrlParam,
+  sortFieldUrlParam,
+  sortOrderUrlParam,
+  termUrlParam,
+} from "@/lib/config"
 import { Button } from "@/components/ui/button"
 
 const fieldMainLang = "mainLang"
 const fieldMaterial = "material"
-const fieldForeignLang = "ForeignLang"
+const fieldForeignLang = "foreignLang"
+const fieldRegion = "region"
+const fieldTerms = "terms"
 const sortAsc = "asc"
 const sortDesc = "desc"
 
@@ -24,6 +33,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
   const router = useRouter()
   const [queryMaterial, setQueryMaterial] = useState<string>(searchParams.get(materialUrlParam) || "")
   const [queryMainLang, setQueryMainLang] = useState<string>(searchParams.get(languageUrlParam) || "")
+  const [queryRegion, setQueryRegion] = useState<string>(searchParams.get(regionUrlParam) || "")
   const [queryTerm, setQueryTerm] = useState<string>(searchParams.get(termUrlParam) || "")
   const [sortField, setSortField] = useState<string | null>(searchParams.get(sortFieldUrlParam))
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
@@ -42,6 +52,11 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
       params.set(languageUrlParam, queryMainLang)
     } else {
       params.delete(languageUrlParam)
+    }
+    if (queryRegion) {
+      params.set(regionUrlParam, queryRegion)
+    } else {
+      params.delete(regionUrlParam)
     }
     if (queryTerm) {
       params.set(termUrlParam, queryTerm)
@@ -67,7 +82,7 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
     return new Fuse(items, {
       includeScore: true,
       threshold: 0.0, // 0.0 = strict
-      keys: [fieldMaterial, fieldMainLang, "terms"],
+      keys: [fieldMaterial, fieldMainLang, fieldRegion, fieldTerms],
     })
   }, [items])
 
@@ -104,6 +119,8 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
     })
   }, [mainLangs])
 
+  const regions: Array<string> = ["egypt"]
+
   const queryF: Expression = { $and: [] }
   if (queryMaterial) {
     queryF.$and!.push({ material: queryMaterial })
@@ -111,12 +128,15 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
   if (queryMainLang) {
     queryF.$and!.push({ mainLang: queryMainLang })
   }
+  if (queryRegion) {
+    queryF.$and!.push({ region: queryRegion })
+  }
   if (queryTerm) {
     queryF.$and!.push({ terms: queryTerm })
   }
 
   const results: IdpEntry[] =
-    queryMaterial || queryMainLang || queryTerm ? fuse.search(queryF).map((res) => res.item) : items
+    queryMaterial || queryMainLang || queryRegion || queryTerm ? fuse.search(queryF).map((res) => res.item) : items
   const orderedResults = useMemo(() => {
     return results.slice().sort((a, b) => {
       let aVal = ""
@@ -137,6 +157,10 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
           aVal = a.foreignLang?.[0] ? Object.keys(a.foreignLang[0])[0] : ""
           bVal = b.foreignLang?.[0] ? Object.keys(b.foreignLang[0])[0] : ""
           break
+
+        case fieldRegion:
+          aVal = a.region ?? ""
+          bVal = b.region ?? ""
       }
 
       const direction = sortOrder === sortDesc ? -1 : 1
@@ -155,6 +179,13 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
   return (
     <>
       <div className="flex flex-row gap-2">
+        <DropdownSelect
+          items={regions}
+          placeholder="Type or select a region..."
+          defaultText="Select region..."
+          query={queryRegion}
+          setQuery={setQueryRegion}
+        />
         <DropdownSelect
           items={resultMaterials}
           placeholder="Type or select a material..."
@@ -179,7 +210,15 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
       </div>
       <div className="flex flex-row gap-2 py-4">
         <span>{orderedResults.length} hits </span>
-        {(queryMaterial || queryMainLang || queryTerm) && <span>for </span>}
+        {(queryMaterial || queryMainLang || queryRegion || queryTerm) && <span>for </span>}
+        {queryRegion && (
+          <Badge>
+            <span>Region: {queryRegion}</span>
+            <button className="ps-1" onClick={() => setQueryRegion("")}>
+              <X className="h-4 w-4" />
+            </button>
+          </Badge>
+        )}
         {queryMaterial && (
           <Badge>
             <span>Material: {queryMaterial}</span>
@@ -221,6 +260,20 @@ export const SearchScreen = ({ items }: { items: Array<IdpEntry> }) => {
                 )}
               >
                 Title
+              </div>
+              <div
+                className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
+              >
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSortField(fieldRegion)
+                    setSortOrder(sortOrder === sortAsc ? sortDesc : sortAsc)
+                  }}
+                >
+                  Region
+                  {sortField === fieldRegion ? sortOrder === sortDesc ? <ArrowDown /> : <ArrowUp /> : <ArrowUpDown />}
+                </Button>
               </div>
               <div
                 className={cn("text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", "w-32")}
