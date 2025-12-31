@@ -1,3 +1,4 @@
+import logging
 import os.path
 from typing import Any, Optional
 import epidoc_parser
@@ -79,6 +80,29 @@ def merge_list(result: dict[str, Any], field: str, values: Optional[list[Any]]) 
         current.append(value)
 
 
+def is_from_egypt(doc: epidoc_parser.EpiDoc) -> bool:
+    keywords = ["ägypten", "egypt"]
+
+    origin_place = doc.origin_place.get("text")
+    if origin_place and any(k in origin_place.lower() for k in keywords):
+        return True
+
+    for prov_type in ["composed", "located"]:
+        for elem in doc.provenances.get(prov_type, []):
+            if elem is None:
+                continue
+            text = elem.get("text")
+            if not isinstance(text, str):
+                # Should not happen
+                if isinstance(text, list):
+                    logging.warning(f"doc '{doc.title}' has list for {prov_type} provenance text")
+                continue
+            if any(k in text.lower() for k in keywords):
+                return True
+
+    return False
+
+
 def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
     result = {
         "tm": tm,
@@ -111,6 +135,8 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             merge_list(result, "provenancesFound", create_list(doc.provenances.get("found"), "text"))
             merge_single(result, "sourceAuthority", doc.authority)
             merge_single(result, "sourceAvailability", doc.availability)
+            if is_from_egypt(doc):
+                result["region"] = "egypt"
         elif file.startswith("DDB_EpiDoc_XML"):
             # url: f"http://papyri.info/ddbdp/{ddb_hybrid}" with `ddb_hybrid = doc.idno.get("ddb-hybrid")`
 
@@ -137,6 +163,8 @@ def convert(tm: str, files: list[str], idp_data_repo: str) -> dict[str, Any]:
             merge_list(result, "provenancesFound", create_list(doc.provenances.get("found"), "text"))
             merge_single(result, "sourceAuthority", doc.authority)
             merge_single(result, "sourceAvailability", doc.availability)
+            if is_from_egypt(doc):
+                result["region"] = "egypt"
         elif file.startswith("HGV_trans_EpiDoc"):
             pass
 
