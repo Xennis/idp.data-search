@@ -3,7 +3,6 @@ import os.path
 from typing import Any, Optional
 import epidoc_parser
 
-
 csv_fieldnames = [
     "tm",
     "title",
