@@ -1,18 +1,22 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "pipeline/"
+    directory: "/pipeline"
     schedule:
       interval: "monthly"
     groups:
       all:
         patterns:
           - "*"
+    cooldown:
+      default-days: 3
   - package-ecosystem: "npm"
-    directory: "web/"
+    directory: "/web"
     schedule:
       interval: "monthly"
     groups:
       all:
         patterns:
           - "*"
+    cooldown:
+      default-days: 3
