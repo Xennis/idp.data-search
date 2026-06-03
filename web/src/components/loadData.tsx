@@ -4,6 +4,7 @@ import { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { Loader2Icon } from "lucide-react"
 import useSWR from "swr"
+import nextConfig from "../../next.config"
 
 type LoadDataProps<T> = {
   fetchUrl: string
@@ -13,7 +14,7 @@ type LoadDataProps<T> = {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
-  const { data, error, isLoading } = useSWR(fetchUrl, fetcher)
+  const { data, error, isLoading } = useSWR(nextConfig.basePath + fetchUrl, fetcher)
 
   if (isLoading) {
     return (
