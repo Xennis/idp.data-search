@@ -14,7 +14,7 @@ type LoadDataProps<T> = {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
-  const { data, error, isLoading } = useSWR(nextConfig.basePath + fetchUrl, fetcher)
+  const { data, error, isLoading } = useSWR(nextConfig.basePath ?? "" + fetchUrl, fetcher)
 
   if (isLoading) {
     return (
