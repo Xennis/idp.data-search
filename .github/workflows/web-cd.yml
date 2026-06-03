@@ -27,15 +27,15 @@ jobs:
         uses: actions/checkout@v6
       - name: Mise install
         uses: jdx/mise-action@v2
-      - name: Setup Pages
-        uses: actions/configure-pages@v6
-        with:
-          generator_config_file: ./web/next.config.ts
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: next
+      #- name: Setup Pages
+      #  uses: actions/configure-pages@v6
+      #  with:
+      #    generator_config_file: ./web/next.config.ts
+      #    # Automatically inject basePath in your Next.js configuration file and disable
+      #    # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
+      #    #
+      #    # You may remove this line if you want to manage the configuration yourself.
+      #    static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v5
         with:
