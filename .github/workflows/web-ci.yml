@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Mise install
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v4
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         working-directory: ./web
