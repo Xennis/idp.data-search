@@ -14,7 +14,8 @@ type LoadDataProps<T> = {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
-  const { data, error, isLoading } = useSWR(nextConfig.basePath ?? "" + fetchUrl, fetcher)
+  const url = `${nextConfig.basePath ?? ""}${fetchUrl}`
+  const { data, error, isLoading } = useSWR(url, fetcher)
 
   if (isLoading) {
     return (
@@ -25,6 +26,7 @@ export const LoadData = <T,>({ fetchUrl, children }: LoadDataProps<T>) => {
     )
   }
   if (error) {
+    console.warn(`failed to load data: ${error}`)
     return <div>Error loading data</div>
   }
 
