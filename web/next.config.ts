@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   basePath: "/idp.data-search",
   output: "export",
   experimental: {
-    useTypeScriptCli: true
-  }
+    useTypeScriptCli: true,
+  },
 }
 
 export default nextConfig
